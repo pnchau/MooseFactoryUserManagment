@@ -30,7 +30,6 @@ def get_db_connection():
         logging.error(f"Database connection error: {err}")
         return None
 
-
 @app.route("/init-db")
 def init_db():
     conn = get_db_connection()
@@ -40,29 +39,21 @@ def init_db():
     cursor = conn.cursor()
 
     try:
-        # Run database_template.sql
-        with open("database_template.sql", "r") as f:
-            sql_script = f.read()
-        for statement in sql_script.split(";"):
-            if statement.strip():
-                cursor.execute(statement)
-                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
+        # Helper function to execute SQL scripts safely
+        def execute_sql_file(filename):
+            with open(filename, "r") as f:
+                sql_script = f.read()
+            for statement in sql_script.split(";"):
+                if statement.strip():
+                    cursor.execute(statement)
+                    # ✅ Only call fetchall() for SELECT queries
+                    if statement.strip().lower().startswith("select"):
+                        cursor.fetchall()  
 
-        # Run default_dataset.sql
-        with open("default_dataset.sql", "r") as f:
-            sql_script = f.read()
-        for statement in sql_script.split(";"):
-            if statement.strip():
-                cursor.execute(statement)
-                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
-
-        # Run test_case.sql
-        with open("test_case.sql", "r") as f:
-            sql_script = f.read()
-        for statement in sql_script.split(";"):
-            if statement.strip():
-                cursor.execute(statement)
-                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
+        # Run SQL scripts
+        execute_sql_file("database_template.sql")
+        execute_sql_file("default_dataset.sql")
+        execute_sql_file("test_case.sql")
 
         conn.commit()
         cursor.close()
@@ -72,7 +63,6 @@ def init_db():
     except mysql.connector.Error as err:
         logging.error(f"SQL execution error: {err}")
         return f"SQL Execution Error: {err}", 500
-
 
 @app.route("/")
 def home():
