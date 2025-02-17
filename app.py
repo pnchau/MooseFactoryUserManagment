@@ -21,12 +21,17 @@ def get_db_connection():
 
 def execute_sql_file(cursor, filename):
     with open(filename, "r") as f:
-        for line in f:
-            statement = line.strip()
-            if statement:
-                cursor.execute(statement)
-                if statement.lower().startswith("select"):
-                    cursor.fetchall()
+        sql_script = f.read()
+    
+    statements = sql_script.split(";")
+
+    for statement in statements:
+        statement = statement.strip()  # Remove unnecessary spaces
+        if statement:  # Only execute non-empty statements
+            cursor.execute(statement)
+            if statement.lower().startswith("select"):
+                cursor.fetchall()
+
 #Initializes database connection
 @app.route("/init-db")
 def init_db():
