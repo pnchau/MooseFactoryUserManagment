@@ -16,11 +16,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 def get_db_connection():
     try:
+        logging.info(f"Attempting to connect to MySQL at {DB_HOST} as {DB_USER}")
         conn = mysql.connector.connect(
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASS,
-            database=DB_NAME
+            database=DB_NAME,
+            port=3306
         )
         logging.info("Database connection successful")
         return conn
