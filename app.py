@@ -5,7 +5,6 @@ import logging
 
 app = Flask(__name__)
 
-# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
 DB_HOST = os.getenv("DB_HOST", "moosefactorydb.mysql.database.azure.com")
@@ -36,7 +35,7 @@ def init_db():
     if conn is None:
         return "Database connection failed", 500
 
-    cursor = conn.cursor(buffered=True)  # ✅ Add buffered=True to prevent unread result errors
+    cursor = conn.cursor(buffered=True)
 
     try:
         # Helper function to execute SQL scripts safely
@@ -46,11 +45,9 @@ def init_db():
             for statement in sql_script.split(";"):
                 if statement.strip():
                     cursor.execute(statement)
-                    # ✅ Only fetch results for SELECT queries
                     if statement.strip().lower().startswith("select"):
                         cursor.fetchall()  
-
-        # ✅ Run SQL scripts
+                        
         execute_sql_file("database_template.sql")
         execute_sql_file("default_dataset.sql")
         execute_sql_file("test_case.sql")
