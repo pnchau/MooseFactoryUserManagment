@@ -46,6 +46,7 @@ def init_db():
         for statement in sql_script.split(";"):
             if statement.strip():
                 cursor.execute(statement)
+                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
 
         # Run default_dataset.sql
         with open("default_dataset.sql", "r") as f:
@@ -53,6 +54,7 @@ def init_db():
         for statement in sql_script.split(";"):
             if statement.strip():
                 cursor.execute(statement)
+                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
 
         # Run test_case.sql
         with open("test_case.sql", "r") as f:
@@ -60,6 +62,7 @@ def init_db():
         for statement in sql_script.split(";"):
             if statement.strip():
                 cursor.execute(statement)
+                cursor.fetchall()  # ✅ Ensure all results are read before executing the next query
 
         conn.commit()
         cursor.close()
@@ -69,6 +72,7 @@ def init_db():
     except mysql.connector.Error as err:
         logging.error(f"SQL execution error: {err}")
         return f"SQL Execution Error: {err}", 500
+
 
 @app.route("/")
 def home():
