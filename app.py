@@ -36,7 +36,7 @@ def init_db():
     if conn is None:
         return "Database connection failed", 500
 
-    cursor = conn.cursor()
+    cursor = conn.cursor(buffered=True)  # ✅ Add buffered=True to prevent unread result errors
 
     try:
         # Helper function to execute SQL scripts safely
@@ -46,11 +46,11 @@ def init_db():
             for statement in sql_script.split(";"):
                 if statement.strip():
                     cursor.execute(statement)
-                    # ✅ Only call fetchall() for SELECT queries
+                    # ✅ Only fetch results for SELECT queries
                     if statement.strip().lower().startswith("select"):
                         cursor.fetchall()  
 
-        # Run SQL scripts
+        # ✅ Run SQL scripts
         execute_sql_file("database_template.sql")
         execute_sql_file("default_dataset.sql")
         execute_sql_file("test_case.sql")
@@ -63,6 +63,7 @@ def init_db():
     except mysql.connector.Error as err:
         logging.error(f"SQL execution error: {err}")
         return f"SQL Execution Error: {err}", 500
+
 
 @app.route("/")
 def home():
