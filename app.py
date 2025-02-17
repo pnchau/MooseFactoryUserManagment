@@ -5,30 +5,31 @@ import logging
 
 app = Flask(__name__)
 
-# Load database config from Azure environment variables
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
+DB_HOST = os.getenv("DB_HOST", "moosefactorydb.mysql.database.azure.com")
+DB_PORT = int(os.getenv("DB_PORT", 3306))
+DB_USER = os.getenv("DB_USER", "moose")  # Updated to match your working connection
+DB_PASS = os.getenv("DB_PASS", "Moosefactory123")
+DB_NAME = os.getenv("DB_NAME", "moosefactory_sql")
+
 def get_db_connection():
     try:
-        logging.info(f"Attempting to connect to MySQL at {DB_HOST} as {DB_USER}")
+        logging.info(f"Connecting to MySQL at {DB_HOST}:{DB_PORT} as {DB_USER}")
         conn = mysql.connector.connect(
             host=DB_HOST,
+            port=DB_PORT,
             user=DB_USER,
             password=DB_PASS,
-            database=DB_NAME,
-            port=3306
+            database=DB_NAME
         )
         logging.info("Database connection successful")
         return conn
     except mysql.connector.Error as err:
         logging.error(f"Database connection error: {err}")
         return None
+
 
 @app.route("/init-db")
 def init_db():
