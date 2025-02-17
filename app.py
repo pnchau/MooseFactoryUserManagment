@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 DB_HOST = os.getenv("DB_HOST", "moosefactorydb.mysql.database.azure.com")
 DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_USER = os.getenv("DB_USER", "moose")  # Updated to match your working connection
+DB_USER = os.getenv("DB_USER", "moose")
 DB_PASS = os.getenv("DB_PASS", "Moosefactory123")
 DB_NAME = os.getenv("DB_NAME", "moosefactory_sql")
 
